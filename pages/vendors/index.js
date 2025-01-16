@@ -4,17 +4,18 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 export default function VendorsList() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
-
-
-  if (!session) {
-    router.push("/");
-    return null;
-  }
   const [vendors, setVendors] = useState([]);
   const [page, setPage] = useState(1);
   const limit = 5;
+
+  useEffect(() => {
+    // Redirect to login page if unauthenticated
+    if (status === "unauthenticated") {
+      router.push("/");
+    }
+  }, [status, router]);
 
   useEffect(() => {
     const fetchVendors = async () => {
@@ -30,8 +31,20 @@ export default function VendorsList() {
         console.error("Error fetching vendors:", error);
       }
     };
-    fetchVendors();
-  }, [page]);
+
+    // Fetch vendors only when authenticated
+    if (status === "authenticated") {
+      fetchVendors();
+    }
+  }, [page, status]);
+
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
+
+  if (status === "unauthenticated") {
+    return null;
+  }
 
   return (
     <div className="container my-5">
