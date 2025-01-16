@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   } else if (req.method === "POST") {
     const vendor = req.body;
     const result = await collection.insertOne(vendor);
-    res.status(201).json(result.ops[0]);
+    res.status(201).json({ id: result.insertedId, ...vendor });
   } else {
     res.status(405).end();
   }

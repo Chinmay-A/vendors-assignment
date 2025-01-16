@@ -36,20 +36,28 @@ export default function AddVendor() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const res = await fetch("/api/vendors", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(vendor),
-    });
-
-    if (res.ok) {
+  
+    try {
+      const res = await fetch("/api/vendors", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(vendor),
+      });
+  
+      if (!res.ok) {
+        const errorData = await res.json();
+        alert(`Failed to add vendor: ${errorData.message || "Unknown error"}`);
+        return;
+      }
+  
+      const data = await res.json();
       alert("Vendor added successfully!");
       router.push("/vendors");
-    } else {
-      alert("Failed to add vendor.");
+    } catch (error) {
+      console.error("Error adding vendor:", error);
+      alert("An unexpected error occurred. Please try again.");
     }
   };
 

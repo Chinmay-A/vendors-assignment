@@ -108,8 +108,13 @@ export default function VendorsList() {
 function handleDelete(id) {
   if (confirm("Are you sure you want to delete this vendor?")) {
     fetch(`/api/vendors/${id}`, { method: "DELETE" }).then((res) => {
-      if (res.ok) alert("Vendor deleted!");
-      else alert("Failed to delete vendor.");
+      if (res.ok) {
+        alert("Vendor deleted!");
+        window.location.reload();
+      } else {
+        alert("Failed to delete vendor.");
+      }
     });
   }
 }
+
